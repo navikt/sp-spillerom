@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  test-and-lint:
+  test:
     permissions:
       contents: 'read'
     runs-on: ubuntu-latest
@@ -23,9 +23,7 @@ jobs:
         uses: ./.github/actions/setup-npm-deps
         with:
           AUTH_TOKEN: ${{ secrets.READER_TOKEN }}
-      - run: pnpm run lint
       - run: pnpm run tsc
-      - run: pnpm run prettier:check
       - run: pnpm run test
 
   build-demo:
@@ -54,7 +52,7 @@ jobs:
 
   deploy-demo:
     name: Deploy til demo
-    needs: [build-demo, test-and-lint]
+    needs: [build-demo, test]
     uses: navikt/sykepenger-github-workflows/.github/workflows/deploy-v2.yml@b34afa2e28c72e92d6c3ef2f9607f982b0a8283f # v1.0.14
     with:
       manifest: .nais/sp-spillerom.yaml

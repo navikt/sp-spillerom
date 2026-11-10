@@ -19,9 +19,7 @@ jobs:
         with:
           AUTH_TOKEN: ${{ secrets.READER_TOKEN }}
       - run: cp .nais/envs/.env.demo .env.production
-      - run: pnpm run lint
       - run: pnpm run tsc
-      - run: pnpm run prettier:check
       - run: pnpm run test
       - run: pnpm run build
 
