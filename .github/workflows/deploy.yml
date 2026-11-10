@@ -1,0 +1,65 @@
+name: deploy
+
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: '0 4 * * 3'
+      timezone: 'Europe/Oslo'
+  workflow_dispatch:
+
+jobs:
+  test-and-lint:
+    permissions:
+      contents: 'read'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Installer deps
+        uses: ./.github/actions/setup-npm-deps
+        with:
+          AUTH_TOKEN: ${{ secrets.READER_TOKEN }}
+      - run: pnpm run lint
+      - run: pnpm run tsc
+      - run: pnpm run prettier:check
+      - run: pnpm run test
+
+  build-demo:
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Installer deps
+        uses: ./.github/actions/setup-npm-deps
+        with:
+          AUTH_TOKEN: ${{ secrets.READER_TOKEN }}
+      - run: cp .nais/envs/.env.demo .env.production
+      - run: pnpm run build
+      - uses: nais/docker-build-push@dd7421d5068057a020ca46ead966c26190c516b1 # v0
+        name: Build and push image
+        id: docker-build-push
+        with:
+          team: tbd
+    outputs:
+      image: ${{ steps.docker-build-push.outputs.image }}
+
+  deploy-demo:
+    name: Deploy til demo
+    needs: [build-demo, test-and-lint]
+    uses: navikt/sykepenger-github-workflows/.github/workflows/deploy-v2.yml@b34afa2e28c72e92d6c3ef2f9607f982b0a8283f # v1.0.14
+    with:
+      manifest: .nais/sp-spillerom.yaml
+      environment: dev-gcp
+      image: ${{ needs.build-demo.outputs.image }}
+    permissions:
+      contents: read
+      id-token: write # for nais login

@@ -1,7 +1,5 @@
-name: 'Copilot Setup Steps'
+name: Copilot Setup Steps
 
-# Automatically run the setup steps when they are changed to allow for easy validation, and
-# allow manual testing through the repository's "Actions" tab
 on:
   workflow_dispatch:
   push:
@@ -12,15 +10,15 @@ on:
       - .github/workflows/copilot-setup-steps.yml
 
 jobs:
-  # The job MUST be called `copilot-setup-steps` or it will not be picked up by Copilot.
+  # Jobbnavnet må være copilot-setup-steps, ellers plukker Copilot den ikke opp.
   copilot-setup-steps:
+    name: Sett opp miljø for Copilot
     runs-on: ubuntu-latest
-
+    timeout-minutes: 30
     permissions:
       contents: read
-      packages: read
 
     steps:
-      - uses: navikt/helse-spillerom/actions/pnpm-cached@main
+      - uses: navikt/sykepenger-github-workflows/.github/actions/copilot-setup-steps@b34afa2e28c72e92d6c3ef2f9607f982b0a8283f # v1.0.14
         with:
-          NPM_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          node: true

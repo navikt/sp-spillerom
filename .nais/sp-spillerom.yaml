@@ -1,14 +1,13 @@
-apiVersion: 'nais.io/v1alpha1'
-kind: 'Application'
+apiVersion: nais.io/v1alpha1
+kind: Application
 metadata:
-  name: spillerom-demo
-  namespace: speilvendt
+  name: sp-spillerom
+  namespace: tbd
   annotations:
     snorlax.nais.io/enabled: 'false'
   labels:
-    team: speilvendt
+    team: tbd
 spec:
-  image: {{image}}
   port: 3000
   ingresses:
     - https://spillerom.ekstern.dev.nav.no
@@ -29,10 +28,7 @@ spec:
         - id: elastic
   accessPolicy:
     outbound:
-      rules:
-        - application: bakrommet
       external:
-        - host: sp-kodeverk.ekstern.dev.nav.no
         - host: bakrommet-demo.ekstern.dev.nav.no
   resources:
     limits:

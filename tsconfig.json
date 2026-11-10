@@ -28,6 +28,6 @@
             "@schemas/*": ["./src/schemas/*"]
         }
     },
-    "include": ["src", "playwright", ".next/types/**/*.ts", ".next/dev/types/**/*.ts"],
+    "include": ["src", ".next/types/**/*.ts", ".next/dev/types/**/*.ts"],
     "exclude": ["node_modules"]
 }

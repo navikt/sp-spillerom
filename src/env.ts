@@ -4,7 +4,6 @@ export type PublicEnv = z.infer<typeof browserEnvSchema>
 
 export const browserEnvSchema = z.object({
     NEXT_PUBLIC_RUNTIME_ENV: z.union([z.literal('dev'), z.literal('lokal'), z.literal('demo'), z.literal('prod')]),
-    NEXT_PUBLIC_ASSET_PREFIX: z.string().optional(),
 })
 
 /**
@@ -14,7 +13,6 @@ export const browserEnvSchema = z.object({
  */
 export const browserEnv = browserEnvSchema.parse({
     NEXT_PUBLIC_RUNTIME_ENV: process.env.NEXT_PUBLIC_RUNTIME_ENV,
-    NEXT_PUBLIC_ASSET_PREFIX: process.env.NEXT_PUBLIC_ASSET_PREFIX,
 } satisfies Record<keyof PublicEnv, string | undefined>)
 
 export const erLokal = browserEnv.NEXT_PUBLIC_RUNTIME_ENV === 'lokal'
